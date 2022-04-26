@@ -2,6 +2,7 @@ import Fluent
 import FluentPostgresDriver
 import Leaf
 import Vapor
+import Redis
 
 // configures your application
 public func configure(_ app: Application) throws {
@@ -15,6 +16,8 @@ public func configure(_ app: Application) throws {
         password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
         database: Environment.get("DATABASE_NAME") ?? "vapor_database"
     ), as: .psql)
+
+    app.redis.configuration = try RedisConfiguration(hostname: "localhost")
 
     app.migrations.add(CreateUser())
 
