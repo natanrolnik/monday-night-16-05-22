@@ -1,6 +1,6 @@
 import Foundation
 
-public struct NutmegsCount: Codable {
+public struct UserNutmegs: Codable {
     public let user: User
     public let count: Int
 
@@ -10,18 +10,18 @@ public struct NutmegsCount: Codable {
     }
 }
 
-public struct NutmegsToday: Codable {
-    public let count: Int
+public struct NutmegsSummary: Codable {
+    public let today: Int
 
-    public init(count: Int) {
-        self.count = count
+    public init(today: Int) {
+        self.today = today
     }
 }
 
 public struct NutmegsRanking: Codable {
-    public let ranking: [NutmegsCount]
+    public let ranking: [UserNutmegs]
 
-    public init(ranking: [NutmegsCount]) {
+    public init(ranking: [UserNutmegs]) {
         self.ranking = ranking
     }
 }

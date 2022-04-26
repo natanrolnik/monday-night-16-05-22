@@ -11,13 +11,13 @@ struct UserController: RouteCollection {
 
     private func index(req: Request) async throws -> UsersResponse {
         let users = try await User.query(on: req.db).all()
-        return .init(users: try users.asShared)
+        return .init(users: try users.asPublic)
     }
 
     private func create(req: Request) async throws -> UserResponse {
         let user = try req.content.decode(User.self)
         try await user.save(on: req.db)
-        return .init(user: try user.asShared)
+        return .init(user: try user.asPublic)
     }
 }
 

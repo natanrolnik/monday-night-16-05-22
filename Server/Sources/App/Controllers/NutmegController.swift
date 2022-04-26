@@ -6,24 +6,29 @@ import RediStack
 // Storing the nutmegs count per user could be done with the existing
 // Postgres database. Using Redis is purely for demonstration purposes.
 
-struct NutmegController: RouteCollection {
+class NutmegController: RouteCollection {
     private let redisTodayKey: RedisKey = "nutmeg-count:general:today"
+
+    private var liveSockets = WebSocketsWrapper()
 
     func boot(routes: RoutesBuilder) throws {
         let nutmegs = routes.grouped("nutmegs")
-        nutmegs.get("today", use: today)
+        nutmegs.get("summary", use: summary)
         nutmegs.put("increment", use: increment)
         nutmegs.get("ranking", use: ranking)
+
+        nutmegs.webSocket("live") { [weak self] _, ws in
+            self?.liveSockets.register(ws)
+        }
     }
 
-    private func today(req: Request) async throws -> NutmegsToday {
+    private func summary(req: Request) async throws -> NutmegsSummary {
         let count = try await req.redis.get(redisTodayKey, as: Int.self).get() ?? 0
-        return .init(count: count)
+        return .init(today: count)
     }
 
-    private func increment(req: Request) async throws -> NutmegsCount {
+    private func increment(req: Request) async throws -> UserNutmegs {
         let userId = try req.userId
-        let redisKey: RedisKey = "nutmeg-count:user:\(userId)"
 
         guard let user = try await User.query(on: req.db)
             .filter(\.$id == userId)
@@ -31,28 +36,68 @@ struct NutmegController: RouteCollection {
             throw Abort(.badRequest)
         }
 
-        var currentCount = try await req.redis.get(redisKey, as: Int.self).get() ?? 0
-        currentCount += 1
-        try await req.redis.set(redisKey, to: currentCount).get()
+        async let currentCount = try await get(key: "nutmeg-count:user:\(userId)", on: req, increment: true)
+        async let todayCount = try await get(key: redisTodayKey, on: req, increment: true)
 
-        var todayCount = try await req.redis.get(redisTodayKey, as: Int.self).get() ?? 0
-        todayCount += 1
-        try await req.redis.set(redisTodayKey, to: todayCount).get()
+        let summary = try await NutmegsSummary(today: todayCount).asJSONString
+        liveSockets.send(summary)
 
-        print("Today count is \(todayCount)")
+        return try await .init(user: try user.asPublic, count: currentCount)
+    }
 
-        //TODO: update today count via socket
+    private func get(key: RedisKey, on req: Request, increment: Bool = false) async throws -> Int {
+        var count = try await req.redis.get(key, as: Int.self).get() ?? 0
 
+        if increment {
+            count += 1
+            try await req.redis.set(key, to: count).get()
+        }
 
-        return .init(user: try user.asShared, count: currentCount)
+        return count
     }
 
     private func ranking(req: Request) async throws -> NutmegsRanking {
-//        let a = try await req.redis.
-        throw Abort(.notImplemented)
+        let keys = try await req.redis.scan(matching: "nutmeg-count:user:*", count: 200).get().1
+
+        let userIds = keys.compactMap(\.userId)
+
+        let nutmegs = try await req.redis.mget(keys.map(RedisKey.init(stringLiteral:))).get()
+        let pairs = keys.enumerated().reduce(into: [UUID: Int]()) { result, element in
+            guard let uuid = element.element.userId,
+                  nutmegs.indices.contains(element.offset) else {
+                return
+            }
+
+            result[uuid] = nutmegs[element.offset].int
+        }
+
+        let users = try await User.query(on: req.db)
+            .filter(\.$id ~~ userIds)
+            .all()
+
+        let ranking = users.compactMap { user -> UserNutmegs? in
+            guard let user = try? user.asPublic,
+                  let count = pairs[user.id] else {
+                return nil
+            }
+
+            return UserNutmegs(user: user, count: count)
+        }.sorted { $0.count > $1.count }
+        return .init(ranking: ranking)
     }
 }
 
-extension NutmegsToday: Content {}
-extension NutmegsCount: Content {}
+private extension String {
+    var userId: UUID? {
+        guard let uuidString = components(separatedBy: ":").last,
+              let uuid = UUID(uuidString: uuidString) else {
+            return nil
+        }
+
+        return uuid
+    }
+}
+
+extension NutmegsSummary: Content {}
+extension UserNutmegs: Content {}
 extension NutmegsRanking: Content {}

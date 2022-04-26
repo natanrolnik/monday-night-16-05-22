@@ -24,7 +24,7 @@ final class User: Model, Content {
 }
 
 extension User {
-    var asShared: Shared.User {
+    var asPublic: Shared.User {
         get throws {
             .init(id: try requireID(), name: name, email: email)
         }
@@ -32,9 +32,9 @@ extension User {
 }
 
 extension Array where Element == User {
-    var asShared: [Shared.User] {
+    var asPublic: [Shared.User] {
         get throws {
-            try map { try $0.asShared }
+            try map { try $0.asPublic }
         }
     }
 }
