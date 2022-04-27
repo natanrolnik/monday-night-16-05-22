@@ -23,8 +23,6 @@ public func configure(_ app: Application) throws {
 
     try app.autoMigrate().wait()
 
-    app.views.use(.leaf)
-
     // register routes
     try routes(app)
 }
