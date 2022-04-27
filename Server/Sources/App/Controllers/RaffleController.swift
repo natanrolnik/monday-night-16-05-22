@@ -57,7 +57,10 @@ class RaffleController: RouteCollection {
             }
         } else {
             self.raffleStatus = .finished(winner: try! user.asPublic)
-            self.raffleStatus = .idle
+
+            DispatchQueue.global().asyncAfter(deadline: .now() + 5) {
+                self.raffleStatus = .idle
+            }
         }
     }
 }
