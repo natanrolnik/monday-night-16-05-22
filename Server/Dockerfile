@@ -16,11 +16,13 @@ WORKDIR /build
 # This creates a cached layer that can be reused
 # as long as your Package.swift/Package.resolved
 # files do not change.
-COPY ./Package.* ./
+COPY Server/Package.* Server/
+COPY Shared Shared/
+WORKDIR Server
 RUN swift package resolve
 
 # Copy entire repo into container
-COPY . .
+COPY ../Server .
 
 # Build everything, with optimizations
 RUN swift build -c release --static-swift-stdlib

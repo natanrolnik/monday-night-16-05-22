@@ -32,6 +32,7 @@ services:
     image: nutmeg-stars:latest
     build:
       context: .
+      dockerfile: Server/Dockerfile
     environment:
       <<: *shared_environment
     depends_on:
