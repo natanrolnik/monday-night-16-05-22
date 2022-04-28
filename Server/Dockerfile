@@ -25,7 +25,7 @@ RUN swift package resolve
 COPY Server .
 
 # Build everything, with optimizations
-RUN swift build -c release --static-swift-stdlib
+RUN swift build -c release
 
 # Switch to the staging area
 WORKDIR /staging
