@@ -19,7 +19,7 @@
       </div>
       <div v-else>
         <h2>Book Raffle 📚</h2>
-        <div v-if="candidateUserName != null">
+        <div v-if="candidateUserName != null" :style="{'background-color': raffleBackgroundColor}">
           <h3>{{ candidateUserName }}</h3>
         </div>
         <div v-if="winnerUser != null">
@@ -65,13 +65,30 @@ export default {
       isRaffleIdle: true,
       candidateUserName: null,
       winnerUser: null,
-      openedSocket: false
+      openedSocket: false,
+      raffleBackgroundColor: '#FFFFFF'
     }
   },
   methods: {
+    httpBaseURL () {
+      if (process.env.SERVER_HOST == null) {
+        return 'http://localhost:8080'
+      }
+
+      return 'https://' + process.env.SERVER_HOST
+    },
+
+    wsBaseURL () {
+      if (process.env.SERVER_HOST == null) {
+        return 'ws://localhost:8080'
+      }
+
+      return 'wss://' + process.env.SERVER_HOST
+    },
+
     async createUser () {
       try {
-        const res = await axios.post('http://localhost:8090/users/new', { name: this.$data.inputUserName })
+        const res = await axios.post(this.httpBaseURL() + '/users/new', { name: this.$data.inputUserName })
         this.userId = res.data.user.id
         this.userName = res.data.user.name
         this.openRaffleSocket()
@@ -79,6 +96,7 @@ export default {
         alert("Creating user failed. Make sure you're using a unique name.")
       }
     },
+
     async registerNutmeg () {
       try {
         const config = {
@@ -86,19 +104,20 @@ export default {
             'X-Nutmeg-User-Id': this.$data.userId
           }
         }
-        const res = await axios.put('http://localhost:8090/nutmegs/increment', {}, config)
+        const res = await axios.put(this.httpBaseURL() + '/nutmegs/increment', {}, config)
         this.nutmegsCount = res.data.count
       } catch (error) {
         alert('Something went wrong')
       }
     },
+
     openRaffleSocket () {
       if (this.openedSocket) {
         return
       }
 
       this.openedSocket = true
-      const connection = new WebSocket('ws://localhost:8090/raffle/live')
+      const connection = new WebSocket(this.wsBaseURL() + '/raffle/live')
 
       const self = this
       connection.onmessage = function (event) {
@@ -110,6 +129,7 @@ export default {
 
         if (status.idle != null) {
           self.isRaffleIdle = true
+          self.raffleBackgroundColor = '#FFFFFF'
           self.winnerUser = null
           self.candidateUserName = null
         } else {
@@ -117,9 +137,11 @@ export default {
 
           if (status.running != null) {
             self.candidateUserName = status.running.candidate
+            self.raffleBackgroundColor = 'rgb(' + status.running.color.r + ',' + status.running.color.g + ',' + status.running.color.b
           } else if (status.finished != null) {
             self.candidateUserName = null
             self.winnerUser = status.finished.winner
+            self.raffleBackgroundColor = 'rgb(' + status.finished.color.r + ',' + status.finished.color.g + ',' + status.finished.color.b
           }
         }
       }
