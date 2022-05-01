@@ -64,12 +64,9 @@ struct ContentView: View {
                 .aspectRatio(contentMode: .fit)
                 .confettiCannon(counter: $viewModel.liveCounter,
                                 num: 1,
-                                confettis: [.text("⚽️"), .text("🦵🏻"), .text("⚽️")],
+                                confettis: [.text("⚽️"), .text("🦵🏻"), .text("⚽️"), .text("🌟")],
                                 confettiSize: 40,
-//                                rainHeight: <#T##CGFloat#>,
                                 fadesOut: true)
-//                                repetitions: <#T##Int#>,
-//                                repetitionInterval: <#T##Double#>)
         }
         .background(Color(UIColor.systemGroupedBackground))
         .onAppear {
@@ -124,8 +121,8 @@ extension RaffleStatus {
     var name: String? {
         switch self {
         case .idle, .started: return nil
-        case .running(let name): return name
-        case .finished(let user): return user.name
+        case .running(let name, _): return name
+        case .finished(let user, _): return user.name
         }
     }
 
@@ -133,31 +130,8 @@ extension RaffleStatus {
         switch self {
         case .idle, .started:
             return .systemBackground
-        case .running:
-            return UIColor.palette.randomElement()!
-        case .finished:
-            return .rgb(26, 188, 156)
+        case .running(_, let color), .finished(_, let color):
+            return color.asUIColor
         }
-    }
-}
-
-extension UIColor {
-    static let palette: [UIColor] = [
-        .rgb(52, 152, 219),
-        .rgb(142, 68, 173),
-        .rgb(189, 195, 199),
-        .rgb(241, 196, 15),
-        .rgb(253, 121, 168),
-        .rgb(255, 177, 66),
-        .rgb(255, 82, 82)
-    ]
-
-    static func rgb(_ r: Int, _ g: Int, _ b: Int, _ alpha: CGFloat = 1) -> UIColor {
-        UIColor(
-            red: CGFloat(r)/CGFloat(255),
-            green: CGFloat(g)/CGFloat(255),
-            blue: CGFloat(b)/CGFloat(255),
-            alpha: alpha
-        )
     }
 }

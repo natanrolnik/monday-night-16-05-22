@@ -3,8 +3,8 @@ import Foundation
 public enum RaffleStatus: Codable {
     case idle
     case started
-    case running(candidate: String)
-    case finished(winner: User)
+    case running(candidate: String, color: Color)
+    case finished(winner: User, color: Color)
 }
 
 extension RaffleStatus {
