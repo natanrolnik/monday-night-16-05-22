@@ -1,14 +1,14 @@
 <template>
-  <NutmegStars msg="Welcome to NutmegStars"/>
+  <StrikerApp />
 </template>
 
 <script>
-import NutmegStars from './components/NutmegStars.vue'
+import StrikerApp from './components/StrikerApp.vue'
 
 export default {
   name: 'App',
   components: {
-    NutmegStars
+    StrikerApp
   }
 }
 </script>

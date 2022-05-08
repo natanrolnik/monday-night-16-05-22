@@ -1,6 +1,6 @@
 <template>
-  <div class="NutmegStars">
-    <h1>Welcome to Nutmeg Stars!</h1>
+  <div>
+    <h1>Welcome to Striker!</h1>
 
     <div v-if="userId == null">
       <h2>Add your name to play with us!</h2>
@@ -12,9 +12,9 @@
     <div v-else>
       <div v-if="isRaffleIdle">
         <h2>Hello, {{ userName }}</h2>
-        <button v-on:click="this.registerNutmeg()" class="btn btn-primary">Nutmeg!</button>
+        <button v-on:click="this.registerGoal()" class="btn btn-primary">I Scored a Goal!</button>
         <p>
-        Nutmegs so far: {{ nutmegsCount }}
+        Goals so far: {{ goalsCount }}
         </p>
       </div>
       <div v-else>
@@ -40,7 +40,7 @@
 const axios = require('axios')
 
 export default {
-  name: 'NutmegStars',
+  name: 'StrikerApp',
   mounted () {
     if (this.userId != null) {
       this.openRaffleSocket()
@@ -49,19 +49,19 @@ export default {
   data () {
     return {
       get userId () {
-        return localStorage.getItem('nutmeg-stars-user-id')
+        return localStorage.getItem('striker-user-id')
       },
       set userId (value) {
-        localStorage.setItem('nutmeg-stars-user-id', value)
+        localStorage.setItem('striker-user-id', value)
       },
       get userName () {
-        return localStorage.getItem('nutmeg-stars-user-name')
+        return localStorage.getItem('striker-user-name')
       },
       set userName (value) {
-        localStorage.setItem('nutmeg-stars-user-name', value)
+        localStorage.setItem('striker-user-name', value)
       },
       inputUserName: null,
-      nutmegsCount: 0,
+      goalsCount: 0,
       isRaffleIdle: true,
       candidateUserName: null,
       winnerUser: null,
@@ -97,15 +97,15 @@ export default {
       }
     },
 
-    async registerNutmeg () {
+    async registerGoal () {
       try {
         const config = {
           headers: {
-            'X-Nutmeg-User-Id': this.$data.userId
+            'X-Striker-User-Id': this.$data.userId
           }
         }
-        const res = await axios.put(this.httpBaseURL() + '/nutmegs/increment', {}, config)
-        this.nutmegsCount = res.data.count
+        const res = await axios.put(this.httpBaseURL() + '/goals/increment', {}, config)
+        this.goalsCount = res.data.count
       } catch (error) {
         alert('Something went wrong')
       }
@@ -148,7 +148,7 @@ export default {
     }
   },
   props: {
-    msg: String
+
   }
 }
 </script>

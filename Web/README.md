@@ -1,4 +1,4 @@
-# nutmeg-stars-web
+# striker-web
 
 ## Project setup
 ```
