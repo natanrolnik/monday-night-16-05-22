@@ -7,13 +7,15 @@ struct GoalIncrementErrorMiddleware: AsyncMiddleware {
 
         if request.method == .PUT,
            request.url.path == "/goals/increment",
-           response.status == .notImplemented,
-           let userId = try? request.userId {
+           response.status == .notImplemented {
 
-            if let user = try await User.query(on: request.db)
+            if let userId = try? request.userId,
+               let user = try await User.query(on: request.db)
                 .filter(\.$id == userId)
                 .first() {
                 request.logger.notice("Goal increment tried by \(user.name), but it's not implemented yet")
+            } else {
+                request.logger.notice("Goal increment tried anonymously, but it's not implemented yet")
             }
         }
 
