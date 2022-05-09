@@ -4,7 +4,8 @@ import Shared
 
 struct UserController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let usersRoute = routes.grouped("users") // example.com/users/...
+        // example.com/users/...
+        let usersRoute = routes.grouped("users")
 
         // POST example.com/users/new
         usersRoute.post("new", use: create)

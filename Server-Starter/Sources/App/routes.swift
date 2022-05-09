@@ -12,5 +12,4 @@ func routes(_ app: Application) throws {
 
     try app.register(collection: GoalController())
     try app.register(collection: RaffleController())
-    try app.register(collection: UserController())
 }
