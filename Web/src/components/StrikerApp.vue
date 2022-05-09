@@ -71,19 +71,13 @@ export default {
   },
   methods: {
     httpBaseURL () {
-      if (process.env.SERVER_HOST == null) {
-        return 'http://localhost:8080'
-      }
-
-      return 'https://' + process.env.SERVER_HOST
+      // return 'http://localhost:8080'
+      return 'https://striker-api.eu.ngrok.io'
     },
 
     wsBaseURL () {
-      if (process.env.SERVER_HOST == null) {
-        return 'ws://localhost:8080'
-      }
-
-      return 'wss://' + process.env.SERVER_HOST
+      // return 'ws://localhost:8080'
+      return 'wss://striker-api.eu.ngrok.io'
     },
 
     async createUser () {
@@ -93,7 +87,7 @@ export default {
         this.userName = res.data.user.name
         this.openRaffleSocket()
       } catch (error) {
-        alert("Creating user failed. Make sure you're using a unique name.")
+        alert('Creating user failed.\n' + (error.message || 'No message') + '\nStatus code: ' + error.response.status)
       }
     },
 
@@ -107,7 +101,7 @@ export default {
         const res = await axios.put(this.httpBaseURL() + '/goals/increment', {}, config)
         this.goalsCount = res.data.count
       } catch (error) {
-        alert('Something went wrong')
+        alert('Registering goal failed.\n' + (error.response.data.reason || error.message || 'No message') + '\nStatus code: ' + error.response.status)
       }
     },
 
