@@ -15,7 +15,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             VStack {
-                Text("Nutmeg Stars ⚽️")
+                Text("Striker ⚽️")
                     .font(.largeTitle)
                     .padding()
 
@@ -43,7 +43,7 @@ struct ContentView: View {
             .background(Color(UIColor.systemBackground))
 
             VStack {
-                if let ranking = viewModel.ranking {
+                if let ranking = viewModel.strikers {
                     List {
                         Section(header: Text("Ranking")) {
                             ForEach(ranking) {
@@ -58,13 +58,13 @@ struct ContentView: View {
 
             Text("\(viewModel.liveCounter)")
 
-            Image("NutmegNet")
+            Image("Maracana")
                 .resizable()
-                .frame(width: 80, height: 80)
+                .frame(width: 200, height: 150)
                 .aspectRatio(contentMode: .fit)
                 .confettiCannon(counter: $viewModel.liveCounter,
                                 num: 1,
-                                confettis: [.text("⚽️"), .text("🦵🏻"), .text("⚽️"), .text("🌟")],
+                                confettis: [.text("⚽️"), .text("🥅"), .text("⚽️"), .text("🌟"), .text("🌟")],
                                 confettiSize: 40,
                                 fadesOut: true)
         }
@@ -99,7 +99,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-extension UserNutmegs: Identifiable {
+extension UserGoals: Identifiable {
     public var id: UUID {
         user.id
     }

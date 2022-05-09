@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct NutemegStarsApp: App {
+struct StrikerApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

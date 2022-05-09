@@ -10,15 +10,21 @@ import SwiftUI
 
 class ViewModel: ObservableObject {
     let session = URLSession(configuration: .default, delegate: nil, delegateQueue: nil)
-    private let serverHost = "localhost:8080"
+    private let serverHost: String = {
+    #if targetEnvironment(simulator)
+        "localhost:8080"
+    #else
+        "striker-api.eu.ngrok.io"
+    #endif
+    }()
 
     @Published var showingRaffle = false
     @Published private(set) var raffleStatus = RaffleStatus.idle
-    @Published private(set) var ranking: [UserNutmegs]?
+    @Published private(set) var strikers: [UserGoals]?
     @Published var liveCounter: Int = 0
 
     init() {
-        openNutmegSocket()
+        openGoalsSocket()
         openRaffleSocket()
     }
 
@@ -33,9 +39,9 @@ class ViewModel: ObservableObject {
         task.resume()
     }
 
-    func openNutmegSocket() {
-        let urlString = websocketURL(for: "/nutmegs/live")
-        _ = SocketWrapper<NutmegsSummary>(session: session, urlString: urlString) { summary in
+    func openGoalsSocket() {
+        let urlString = websocketURL(for: "/goals/live")
+        _ = SocketWrapper<GoalsSummary>(session: session, urlString: urlString) { summary in
             DispatchQueue.main.async {
                 self.liveCounter = summary.today
             }
@@ -53,18 +59,18 @@ class ViewModel: ObservableObject {
     }
 
     func loadRanking() {
-        guard let url = URL(string: httpURL(for: "/nutmegs/ranking")) else {
+        guard let url = URL(string: httpURL(for: "/goals/ranking")) else {
             return
         }
 
         session.dataTask(with: url) { data, meh, error in
             guard let data = data,
-                  let ranking = try? JSONDecoder().decode(NutmegsRanking.self, from: data) else {
+                  let ranking = try? JSONDecoder().decode(Ranking.self, from: data) else {
                 return
             }
 
             DispatchQueue.main.async {
-                self.ranking = ranking.ranking
+                self.strikers = ranking.strikers
             }
         }.resume()
     }
