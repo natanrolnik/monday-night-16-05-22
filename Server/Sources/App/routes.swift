@@ -3,14 +3,14 @@ import Vapor
 
 func routes(_ app: Application) throws {
     app.get { req in
-        return req.view.render("index", ["title": "Hello Vapor!"])
+        return "It works!"
     }
 
     app.get("hello") { req -> String in
         return "Hello, world!"
     }
 
-    try app.register(collection: UserController())
-    try app.register(collection: NutmegController())
+    try app.register(collection: GoalController())
     try app.register(collection: RaffleController())
+//    try app.register(collection: UserController())
 }

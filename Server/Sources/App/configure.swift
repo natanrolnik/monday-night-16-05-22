@@ -8,11 +8,13 @@ public func configure(_ app: Application) throws {
     // uncomment to serve files from /Public folder
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
+    app.middleware.use(UserCreationErrorMiddleware(), at: .beginning)
+
     // cors middleware should come before default error middleware using `at: .beginning`
     let config = CORSMiddleware.Configuration(
         allowedOrigin: .originBased,
         allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
-        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .init("X-Nutmeg-User-Id")]
+        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .init("X-Striker-User-Id")]
     )
     app.middleware.use(CORSMiddleware(configuration: config), at: .beginning)
 

@@ -3,31 +3,31 @@ import Vapor
 import Shared
 import RediStack
 
-// Storing the nutmegs count per user could be done with the existing
+// Storing the goals count per user could be done with the existing
 // Postgres database. Using Redis is purely for demonstration purposes.
 
-class NutmegController: RouteCollection {
-    private let redisTodayKey: RedisKey = "nutmeg-count:general:today"
+class GoalController: RouteCollection {
+    private let redisTodayKey: RedisKey = "goals-count:general:today"
 
     private var liveSockets = WebSocketsWrapper()
 
     func boot(routes: RoutesBuilder) throws {
-        let nutmegs = routes.grouped("nutmegs")
-        nutmegs.get("summary", use: summary)
-        nutmegs.put("increment", use: increment)
-        nutmegs.get("ranking", use: ranking)
+        let goalsRoute = routes.grouped("goals")
+        goalsRoute.get("summary", use: summary)
+        goalsRoute.put("increment", use: increment)
+        goalsRoute.get("ranking", use: ranking)
 
-        nutmegs.webSocket("live") { [weak self] _, ws in
+        goalsRoute.webSocket("live") { [weak self] _, ws in
             self?.liveSockets.register(ws)
         }
     }
 
-    private func summary(req: Request) async throws -> NutmegsSummary {
+    private func summary(req: Request) async throws -> GoalsSummary {
         let count = try await req.redis.get(redisTodayKey, as: Int.self).get() ?? 0
-        return .init(today: count)
+        return GoalsSummary(today: count)
     }
 
-    private func increment(req: Request) async throws -> UserNutmegs {
+    private func increment(req: Request) async throws -> UserGoals {
         let userId = try req.userId
 
         guard let user = try await User.query(on: req.db)
@@ -36,13 +36,13 @@ class NutmegController: RouteCollection {
             throw Abort(.badRequest)
         }
 
-        async let currentCount = try await get(key: "nutmeg-count:user:\(userId)", on: req, increment: true)
+        async let currentCount = try await get(key: "goals-count:user:\(userId)", on: req, increment: true)
         async let todayCount = try await get(key: redisTodayKey, on: req, increment: true)
 
-        let summary = try await NutmegsSummary(today: todayCount).asJSONString
+        let summary = try await GoalsSummary(today: todayCount).asJSONString
         liveSockets.send(summary)
 
-        return try await .init(user: try user.asPublic, count: currentCount)
+        return try await UserGoals(user: try user.asPublic, count: currentCount)
     }
 
     private func get(key: RedisKey, on req: Request, increment: Bool = false) async throws -> Int {
@@ -56,34 +56,36 @@ class NutmegController: RouteCollection {
         return count
     }
 
-    private func ranking(req: Request) async throws -> NutmegsRanking {
-        let keys = try await req.redis.scan(matching: "nutmeg-count:user:*", count: 200).get().1
+    private func ranking(req: Request) async throws -> Ranking {
+        let keys = try await req.redis.scan(matching: "goals-count:user:*", count: 200).get().1
 
         let userIds = keys.compactMap(\.userId)
 
-        let nutmegs = try await req.redis.mget(keys.map(RedisKey.init(stringLiteral:))).get()
+        let redisKeys = keys.map { RedisKey(stringLiteral: $0) }
+        let goals = try await req.redis.mget(redisKeys).get()
         let pairs = keys.enumerated().reduce(into: [UUID: Int]()) { result, element in
             guard let uuid = element.element.userId,
-                  nutmegs.indices.contains(element.offset) else {
+                  goals.indices.contains(element.offset) else {
                 return
             }
 
-            result[uuid] = nutmegs[element.offset].int
+            result[uuid] = goals[element.offset].int
         }
 
         let users = try await User.query(on: req.db)
             .filter(\.$id ~~ userIds)
             .all()
 
-        let ranking = users.compactMap { user -> UserNutmegs? in
+        let strikers = users.compactMap { user -> UserGoals? in
             guard let user = try? user.asPublic,
                   let count = pairs[user.id] else {
                 return nil
             }
 
-            return UserNutmegs(user: user, count: count)
+            return UserGoals(user: user, count: count)
         }.sorted { $0.count > $1.count }
-        return .init(ranking: ranking)
+
+        return Ranking(strikers: strikers)
     }
 }
 
@@ -98,6 +100,6 @@ private extension String {
     }
 }
 
-extension NutmegsSummary: Content {}
-extension UserNutmegs: Content {}
-extension NutmegsRanking: Content {}
+extension GoalsSummary: Content {}
+extension UserGoals: Content {}
+extension Ranking: Content {}

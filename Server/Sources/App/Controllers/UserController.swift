@@ -4,20 +4,24 @@ import Shared
 
 struct UserController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let users = routes.grouped("users")
-        users.get(use: index)
-        users.post("new", use: create)
+        let usersRoute = routes.grouped("users") // example.com/users/...
+
+        // POST example.com/users/new
+        usersRoute.post("new", use: create)
+
+        // GET example.com/users
+        usersRoute.get(use: allUsers)
     }
 
-    private func index(req: Request) async throws -> UsersResponse {
+    private func allUsers(req: Request) async throws -> UsersResponse {
         let users = try await User.query(on: req.db).all()
-        return .init(users: try users.asPublic)
+        return UsersResponse(users: try users.asPublic)
     }
 
     private func create(req: Request) async throws -> UserResponse {
         let user = try req.content.decode(User.self)
         try await user.save(on: req.db)
-        return .init(user: try user.asPublic)
+        return UserResponse(user: try user.asPublic)
     }
 }
 

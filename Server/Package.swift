@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "NutmegStars",
+    name: "Striker",
     platforms: [
        .macOS(.v12)
     ],

@@ -7,7 +7,7 @@ extension Request {
             // in any way.
             // It's here only for example purposes.
 
-            guard let headerValue = headers.first(name: "X-Nutmeg-User-Id"),
+            guard let headerValue = headers.first(name: "X-Striker-User-Id"),
                   let userId = UUID(uuidString: headerValue) else {
                 throw Abort(.unauthorized)
             }
