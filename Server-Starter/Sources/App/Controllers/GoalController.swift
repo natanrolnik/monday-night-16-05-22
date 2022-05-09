@@ -28,7 +28,8 @@ class GoalController: RouteCollection {
     }
 
     private func increment(req: Request) async throws -> UserGoals {
-        throw Abort(.notImplemented)
+        throw Abort(.notImplemented,
+                    reason: "We will implement it together in a few minutes!")
     }
 
     private func get(key: RedisKey, on req: Request, increment: Bool = false) async throws -> Int {
