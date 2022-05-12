@@ -89,7 +89,7 @@ export default {
         this.userName = res.data.user.name
         this.openRaffleSocket()
       } catch (error) {
-        alert('Creating user failed.\n' + (error.response.data.reason || error.message || 'No message') + '\nStatus code: ' + error.response.status)
+        alert('Creating user failed.' + '\n' + '/users/new' + '\n' + 'Status code: ' + error.response.status + '\n' (error.response.data.reason || error.message || 'No message'))
       }
     },
 
@@ -103,7 +103,7 @@ export default {
         const res = await axios.put(this.httpBaseURL() + '/goals/increment', {}, config)
         this.goalsCount = res.data.count
       } catch (error) {
-        alert('Registering goal failed.\n' + (error.response.data.reason || error.message || 'No message') + '\nStatus code: ' + error.response.status)
+        alert('Registering goal failed.' + '\n' + '/goals/increment' + '\n' + 'Status code: ' + error.response.status + '\n' + (error.response.data.reason || error.message || 'No message'))
       }
     },
 
