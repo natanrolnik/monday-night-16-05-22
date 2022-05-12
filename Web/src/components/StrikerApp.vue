@@ -73,13 +73,13 @@ export default {
   },
   methods: {
     httpBaseURL () {
-      return 'http://localhost:8080'
-      // return 'https://striker-api.eu.ngrok.io'
+      // return 'http://localhost:8080'
+      return 'https://striker-api.eu.ngrok.io'
     },
 
     wsBaseURL () {
-      return 'ws://localhost:8080'
-      // return 'wss://striker-api.eu.ngrok.io'
+      // return 'ws://localhost:8080'
+      return 'wss://striker-api.eu.ngrok.io'
     },
 
     async createUser () {
