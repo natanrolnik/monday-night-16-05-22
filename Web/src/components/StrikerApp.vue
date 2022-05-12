@@ -3,16 +3,18 @@
     <h1>Welcome to Striker!</h1>
 
     <div v-if="userId == null">
-      <h2>Add your name to play with us!</h2>
-      <h3>In the end, we'll raffle a book</h3>
+      <h2>
+        Add your name to play with us!<br>
+        (In the end, we'll raffle a book)
+      </h2>
       <input v-model.trim="inputUserName" type="text" placeholder="Your name and last name"/>
-      <button v-on:click="this.createUser()" class="btn btn-primary">Become a Star</button>
+      <button class="button" v-on:click="this.createUser()">Become a Star</button>
     </div>
 
     <div v-else>
       <div v-if="isRaffleIdle">
         <h2>Hello, {{ userName }}</h2>
-        <button v-on:click="this.registerGoal()" class="btn btn-primary">I Scored a Goal!</button>
+        <button class="button" v-on:click="this.registerGoal()">I Scored a Goal!</button>
         <p>
         Goals so far: {{ goalsCount }}
         </p>
@@ -71,13 +73,13 @@ export default {
   },
   methods: {
     httpBaseURL () {
-      // return 'http://localhost:8080'
-      return 'https://striker-api.eu.ngrok.io'
+      return 'http://localhost:8080'
+      // return 'https://striker-api.eu.ngrok.io'
     },
 
     wsBaseURL () {
-      // return 'ws://localhost:8080'
-      return 'wss://striker-api.eu.ngrok.io'
+      return 'ws://localhost:8080'
+      // return 'wss://striker-api.eu.ngrok.io'
     },
 
     async createUser () {
@@ -159,5 +161,33 @@ li {
 }
 a {
   color: #42b983;
+}
+input[type=text] {
+  width: 200px;
+  height: 40px;
+  margin: 0px 2px;
+  box-sizing: border-box;
+}
+
+.button {
+  background-color: #42b983; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  box-shadow: 0 5px #666;
+}
+
+.button:hover {
+  background-color: #297b56
+}
+
+.button:active {
+  background-color: #205522;
+  box-shadow: 0 5px #666;
+  transform: translateY(2px);
 }
 </style>
