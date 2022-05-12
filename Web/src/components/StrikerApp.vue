@@ -19,17 +19,17 @@
         Goals so far: {{ goalsCount }}
         </p>
       </div>
-      <div v-else>
+      <div class="book-raffle" v-else>
         <h2>Book Raffle 📚</h2>
-        <div v-if="candidateUserName != null" :style="{'background-color': raffleBackgroundColor}">
+        <div class="candidate-name" v-if="candidateUserName != null" :style="{'background-color': raffleBackgroundColor}">
           <h3>{{ candidateUserName }}</h3>
         </div>
-        <div v-if="winnerUser != null">
+        <div class="winner" v-if="winnerUser != null">
           <div v-if="winnerUser.id == this.userId">
             Congrats, {{ winnerUser.name }}! You just won a book!
           </div>
           <div v-else>
-            The winner is {{ winnerUser.name }}. Thanks for joining anyway!
+            The winner is {{ winnerUser.name }}. Thanks for joining!
           </div>
         </div>
       </div>
@@ -190,4 +190,17 @@ input[type=text] {
   box-shadow: 0 5px #666;
   transform: translateY(2px);
 }
+
+.candidate-name {
+  height: 75vh;
+  line-height: 75vh;
+  font-size: 60px;
+}
+
+.winner {
+  height: 75vh;
+  line-height: 75vh;
+  font-size: 60px;
+}
+
 </style>
