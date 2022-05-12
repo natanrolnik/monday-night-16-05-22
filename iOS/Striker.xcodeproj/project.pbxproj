@@ -53,7 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				4C0EAA4A2819ECD000CBAFAD /* Packages */,
-				4CBA2EAE281952C40072B63F /* NutemegStars */,
+				4CBA2EAE281952C40072B63F /* Striker */,
 				4CBA2EAD281952C40072B63F /* Products */,
 				4CBA2EC428195AE00072B63F /* Frameworks */,
 			);
@@ -67,7 +67,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4CBA2EAE281952C40072B63F /* NutemegStars */ = {
+		4CBA2EAE281952C40072B63F /* Striker */ = {
 			isa = PBXGroup;
 			children = (
 				4CBA2EAF281952C40072B63F /* StrikerApp.swift */,
@@ -77,7 +77,6 @@
 				4CBA2EB3281952C50072B63F /* Assets.xcassets */,
 				4CBA2EB5281952C50072B63F /* Preview Content */,
 			);
-			name = NutemegStars;
 			path = Striker;
 			sourceTree = "<group>";
 		};
@@ -304,7 +303,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"NutemegStars/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Striker/Preview Content\"";
 				DEVELOPMENT_TEAM = FQTTMDLSQ5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -333,7 +332,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"NutemegStars/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Striker/Preview Content\"";
 				DEVELOPMENT_TEAM = FQTTMDLSQ5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

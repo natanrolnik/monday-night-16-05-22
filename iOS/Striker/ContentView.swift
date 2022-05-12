@@ -57,6 +57,7 @@ struct ContentView: View {
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
 
             Text("\(viewModel.liveCounter)")
+                .font(.system(size: 60))
 
             Image("Maracana")
                 .resizable()
