@@ -51,19 +51,24 @@ export default {
   data () {
     return {
       get userId () {
-        return localStorage.getItem('striker-user-id')
+        return localStorage.getItem('striker-app-user-id')
       },
       set userId (value) {
-        localStorage.setItem('striker-user-id', value)
+        localStorage.setItem('striker-app-user-id', value)
       },
       get userName () {
-        return localStorage.getItem('striker-user-name')
+        return localStorage.getItem('striker-app-user-name')
       },
       set userName (value) {
-        localStorage.setItem('striker-user-name', value)
+        localStorage.setItem('striker-app-user-name', value)
+      },
+      get goalsCount () {
+        return localStorage.getItem('striker-app-goals-count') || 0
+      },
+      set goalsCount (value) {
+        localStorage.setItem('striker-app-goals-count', value)
       },
       inputUserName: null,
-      goalsCount: 0,
       isRaffleIdle: true,
       candidateUserName: null,
       winnerUser: null,
