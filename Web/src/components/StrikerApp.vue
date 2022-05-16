@@ -94,7 +94,7 @@ export default {
         this.userName = res.data.user.name
         this.openRaffleSocket()
       } catch (error) {
-        alert('Creating user failed.' + '\n' + '/users/new' + '\n' + 'Status code: ' + error.response.status + '\n' (error.response.data.reason || error.message || 'No message'))
+        alert('Creating user failed.' + '\n' + '/users/new' + '\n' + 'Status code: ' + error.response.status + '\n' + (error.response.data.reason || error.message || 'No message'))
       }
     },
 
