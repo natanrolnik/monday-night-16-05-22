@@ -8,14 +8,40 @@ struct UserController: RouteCollection {
 }
 ---
 
-	func boot(routes: RoutesBuilder) throws {
+func boot(routes: RoutesBuilder) throws {
 
-	}
+}
 ---
 
-	private func create(req: Request) async throws -> UserResponse {
+private func create(req: Request) async throws -> UserResponse {
 
-    }
+}
+---
+
+let user = try req.content.decode(User.self)
+try await user.save(on: req.db)
+return UserResponse(user: try user.asPublic)
+---
+
+private func allUsers(req: Request) async throws -> UsersResponse {
+
+}
+---
+
+let users = try await User.query(on: req.db).all()
+return UsersResponse(users: try users.asPublic)
+---
+
+// example.com/users/...
+let users = routes.grouped("users")
+---
+
+// GET example.com/users
+users.get(use: allUsers)
+---
+
+// POST example.com/users/new
+users.post("new", use: create) 
 ---
 
 extension Shared.User: Content {}
@@ -23,36 +49,10 @@ extension UserResponse: Content {}
 extension UsersResponse: Content {}
 ---
 
-        let user = try req.content.decode(User.self)
-		try await user.save(on: req.db)
-		return UserResponse(user: try user.asPublic)
+try app.register(collection: UserController())
 ---
 
-    private func allUsers(req: Request) async throws -> UsersResponse {
-
-    }
----
-
-    	let users = try await User.query(on: req.db).all()
-    	return UsersResponse(users: try users.asPublic)
----
-
-		// example.com/users/...
-	    let users = routes.grouped("users")
----
-
-		// GET example.com/users
-		users.get(use: allUsers)
----
-
-		// POST example.com/users/new
-		users.post("new", use: create) 
----
-
-    try app.register(collection: UserController())
----
-
-	let userId = try req.userId
+let userId = try req.userId
 ---
 
 guard let user = try await User.query(on: req.db)

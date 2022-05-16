@@ -3,13 +3,17 @@
 * Turn Bluetooth off
 * Enable Don't Disturb Mode
 * Start lazycoder: `lazycoder start Presentation/Snippets.markdown`
+* Prepare TablePlus
+* Prepare Paw
+* Prepare iTerm and its tabs
+* Adjust Xcode font size (also for console)
 
 # Vapor Toolbox
 
 First demo. After having the vapor toolbox installed, run:
 
 ```sh
-vapor new monday-night
+vapor new tuesday
 ```
 
 Choose the different options the toolbox lets you choose from.
@@ -19,15 +23,17 @@ Choose the different options the toolbox lets you choose from.
 Open the project with:
 
 ```sh
-xed monday-night
+xed tuesday
 ```
 
-Show first the **Package.swift** file.
-Move on to the Models, Migrations, Controllers. Finally, configure and routes.
+* Show first the **Package.swift** file.
+* Then, when package resolution finishes, start building.
+* While it builds, show configure and routes.
+*Go over Models and Controllers. Explain what they do, and that the controllers here differ from UIKit view controllers.
 
 ---
 
-Then, open the **routes.swift** file, and modify the hello method to include a custom greeting.
+Open the **routes.swift** file, and modify the `hello` handler to include a custom greeting.
 After that, run the server - emphasize I can run either via command line, or with Xcode. For convenience, I'll use Xcode.
 Once it's up, call via command line:
 
@@ -35,15 +41,15 @@ Once it's up, call via command line:
 curl http://localhost:8080/hello
 ```
 
----
-
 # Striker
 
 Explain we'll move to another demo. Now, open the Server - Starter directory and launch Xcode.
 
-First, show the **Package.swift** file, with emphasis to the Shared package. Show it in Finder as well, and then show it in Xcode itself.
+First, show the **Package.swift** file, with emphasis to the Shared package.
 
 ---
+
+## First Part: UserController methods
 
 Open the web app in the browser, and explain we will implement an API for creating users. Show the QR code, and ask people to try to register. Once they see the 404 error, explain we need to create the controller that will handle this request first.
 
@@ -83,16 +89,6 @@ We will soon be able to fill our routes in the controller. Let's first add the m
 	private func create(req: Request) async throws -> UserResponse {
 
     }
-```
-
----
-
-Because the structs from `Shared` are only `Codable`, but not `Content`, we're seeing these errors. Let's fix this:
-
-```swift
-extension Shared.User: Content {}
-extension UserResponse: Content {}
-extension UsersResponse: Content {}
 ```
 
 ---
@@ -148,7 +144,17 @@ We have our methods, but no one is calling them. Let's add'em to our controller:
 
 ---
 
-Now, who can guess what we are missing? We still haven't "connected" the app to use our new shiny controller.
+We have these errors, because Vapor routing expects the response content to be `Content`. The structs from the `Shared` package are only `Codable`, but not `Content`. Let's fix this:
+
+```swift
+extension Shared.User: Content {}
+extension UserResponse: Content {}
+extension UsersResponse: Content {}
+```
+
+---
+
+Let's build and run, and try again. Now, who can guess what we are missing? We still haven't "connected" the app to use our new shiny controller.
 
 Open **routes.swift**, and add:
 
@@ -157,6 +163,14 @@ Open **routes.swift**, and add:
 ```
 
 ---
+
+Open now TablePlus, show the database and the `users` table.
+
+Try running the `/users/all` call. From Terminal, and from Paw.
+
+---
+
+## Second Part: Increment Goal Count
 
 Let's implement now the `/goals/increment` method. 
 
