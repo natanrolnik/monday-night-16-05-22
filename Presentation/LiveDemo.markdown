@@ -3,6 +3,7 @@
 * Turn Bluetooth off
 * Enable Don't Disturb Mode
 * Start lazycoder: `lazycoder start Presentation/Snippets.markdown`
+* Start ngrok: `ngrok http --subdomain=striker-api 8080`
 * Prepare TablePlus
 * Prepare Paw
 * Prepare iTerm and its tabs
